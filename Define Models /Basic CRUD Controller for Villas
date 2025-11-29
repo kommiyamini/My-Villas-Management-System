@@ -1,0 +1,111 @@
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using System.Threading.Tasks;
+using VillaManagement.Data;
+using VillaManagement.Models;
+
+namespace VillaManagement.Controllers
+{
+    public class VillaController : Controller
+    {
+        private readonly ApplicationDbContext _context;
+
+        public VillaController(ApplicationDbContext context)
+        {
+            _context = context;
+        }
+
+        // GET: /Villa
+        public async Task<IActionResult> Index()
+        {
+            var villas = await _context.Villas
+                .Include(v => v.Client)
+                .ToListAsync();
+            return View(villas);
+        }
+
+        // GET: /Villa/Create
+        public IActionResult Create()
+        {
+            return View();
+        }
+
+        // POST: /Villa/Create
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Create([Bind("Name,Location,ClientId")] Villa villa)
+        {
+            if (ModelState.IsValid)
+            {
+                villa.CreatedOn = DateTime.UtcNow;
+                _context.Add(villa);
+                await _context.SaveChangesAsync();
+                return RedirectToAction(nameof(Index));
+            }
+            return View(villa);
+        }
+
+        // GET: /Villa/Edit/5
+        public async Task<IActionResult> Edit(int? id)
+        {
+            if (id == null) return NotFound();
+            var villa = await _context.Villas.FindAsync(id);
+            if (villa == null) return NotFound();
+            return View(villa);
+        }
+
+        // POST: /Villa/Edit/5
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Edit(int id, [Bind("VillaId,Name,Location,CreatedOn,ClientId")] Villa villa)
+        {
+            if (id != villa.VillaId) return NotFound();
+
+            if (ModelState.IsValid)
+            {
+                try
+                {
+                    _context.Update(villa);
+                    await _context.SaveChangesAsync();
+                }
+                catch (DbUpdateConcurrencyException)
+                {
+                    if (!VillaExists(villa.VillaId)) return NotFound();
+                    else throw;
+                }
+                return RedirectToAction(nameof(Index));
+            }
+            return View(villa);
+        }
+
+        // GET: /Villa/Delete/5
+        public async Task<IActionResult> Delete(int? id)
+        {
+            if (id == null) return NotFound();
+            var villa = await _context.Villas
+                .Include(v => v.Client)
+                .FirstOrDefaultAsync(m => m.VillaId == id);
+            if (villa == null) return NotFound();
+            return View(villa);
+        }
+
+        // POST: /Villa/Delete/5
+        [HttpPost, ActionName("Delete")]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> DeleteConfirmed(int id)
+        {
+            var villa = await _context.Villas.FindAsync(id);
+            if (villa != null)
+            {
+                _context.Villas.Remove(villa);
+                await _context.SaveChangesAsync();
+            }
+            return RedirectToAction(nameof(Index));
+        }
+
+        private bool VillaExists(int id)
+        {
+            return _context.Villas.Any(e => e.VillaId == id);
+        }
+    }
+}
