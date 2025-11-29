@@ -1,0 +1,40 @@
+@model IEnumerable<VillaManagement.Models.Villa>
+
+@{
+    ViewData["Title"] = "Villas";
+}
+
+<h1>Villas</h1>
+
+<p>
+    <a asp-action="Create" class="btn btn-primary">Create New Villa</a>
+</p>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>Villa Id</th>
+            <th>Name</th>
+            <th>Location</th>
+            <th>Client</th>
+            <th>Created On</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+    @foreach(var v in Model)
+    {
+        <tr>
+            <td>@v.VillaId</td>
+            <td>@v.Name</td>
+            <td>@v.Location</td>
+            <td>@v.Client?.FullName</td>
+            <td>@v.CreatedOn.ToString("yyyy-MM-dd")</td>
+            <td>
+                <a asp-action="Edit" asp-route-id="@v.VillaId">Edit</a> |
+                <a asp-action="Delete" asp-route-id="@v.VillaId">Delete</a>
+            </td>
+        </tr>
+    }
+    </tbody>
+</table>
