@@ -1,0 +1,16 @@
+using System;
+
+namespace VillaManagement.Models
+{
+    public class ConstructionPhase
+    {
+        public int ConstructionPhaseId { get; set; }
+        public string PhaseName { get; set; }      // e.g. "Foundation", "Roofing", "Finishing"
+        public DateTime StartDate { get; set; }
+        public DateTime? EndDate { get; set; }
+        public string Status { get; set; }         // e.g. "Pending", "InProgress", "Completed"
+
+        public int VillaId { get; set; }
+        public Villa Villa { get; set; }
+    }
+}
