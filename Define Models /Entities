@@ -1,0 +1,18 @@
+using System;
+using System.Collections.Generic;
+
+namespace VillaManagement.Models
+{
+    public class Villa
+    {
+        public int VillaId { get; set; }
+        public string Name { get; set; }
+        public string Location { get; set; }
+        public DateTime CreatedOn { get; set; }
+
+        // Navigation — list of construction phases
+        public List<ConstructionPhase> Phases { get; set; }
+        public int? ClientId { get; set; }
+        public Client Client { get; set; }
+    }
+}
